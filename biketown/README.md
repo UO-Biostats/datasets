@@ -67,3 +67,29 @@ $ wc -l *.gz
   128300 total
 
 ```
+
+# Mapping data:
+
+Shapefiles for making nice maps
+are available from the City of Portland:
+
+- bike network: [https://gis-pdx.opendata.arcgis.com/datasets/bicycle-network](https://gis-pdx.opendata.arcgis.com/datasets/bicycle-network)
+- the river: [https://gis-pdx.opendata.arcgis.com/datasets/river-overlay-boundary](https://gis-pdx.opendata.arcgis.com/datasets/river-overlay-boundary)
+- streets: [https://gis-pdx.opendata.arcgis.com/datasets/streets](https://gis-pdx.opendata.arcgis.com/datasets/streets)
+
+These have been downloaded and saved
+
+```r
+library(rgdal)
+library(raster)
+crop_extent <- extent(c(-122.75, -122.6, 45.46, 45.56))
+river <- readOGR(dsn="River_Overlay/")
+bikepaths <- readOGR(dsn="bicycle_network")
+bikepaths <- subset(bikepaths, Status == "Active")
+streets <- readOGR(dsn="pdx_streets/")
+streets <- subset(streets, LCITY == "Portland" | RCITY == "Portland")
+river <- crop(river, crop_extent)
+freeways <- crop(subset(streets, TYPE == 1110), crop_extent)
+bigstreets <- crop(subset(streets, TYPE %in% c(1300, 1400)), crop_extent)
+save(crop_extent, river, bikepaths, freeways, bigstreets, file="pdx_features.RData")
+```
