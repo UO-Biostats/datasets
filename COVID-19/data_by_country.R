@@ -19,13 +19,13 @@ d <- subset(d, Province_State != "Diamond Princess cruise ship")
 cols <- as.character(colnames(d[,5:length(d)]))
 d$loc_name <- factor(paste0(as.character(d$Province_State), ifelse(nchar(as.character(d$Province_State)) == 0, "", ", "), as.character(d$Country_Region)))
 locations <- d[, setdiff(colnames(d), cols)]
-thresh_date <- function (thresh) {
+thresh_date_d <- function (thresh) {
     first_index <- 1 + rowSums(d[,cols] < thresh)
     first_index[first_index > length(cols)] <- NA
     return(mdy(cols[first_index]))
 }
-locations$first_date <- thresh_date(1)
-locations$ten_date <- thresh_date(10)
+locations$first_date <- thresh_date_d(1)
+locations$ten_date <- thresh_date_d(10)
 
 covid <- melt(d,
               id.vars = c("Province_State","Country_Region","loc_name"),
@@ -34,8 +34,19 @@ names(covid)[match(c("variable", "value"), names(covid))]  <- c("Date","Case_Cou
 covid$Date <- mdy(as.character(covid$Date))
 covid <- covid[order(covid$Province_State, covid$Country_Region, covid$Date),]
 
+thresh_date <- function (df, thresh, group="loc_name") {
+    use_these <- (df$Case_Count >= thresh)
+    first_date <- as.Date(rep(NA, nlevels(df[[group]])))
+    names(first_date) <- levels(df[[group]])
+    for (g in levels(df[[group]])) {
+        if (any(df$Case_Count >= thresh & df[[group]] == g)) {
+            first_date[g] <- min(df$Date[df$Case_Count >= thresh & df[[group]] == g])
+        }
+    }
+    return(first_date)
+}
 days_since <- function (df, thresh, group="loc_name") {
-    return(df$Date - thresh_date(thresh)[match(df[[group]], locations[[group]])])
+    return(df$Date - thresh_date(df, thresh, group=group)[match(df[[group]], levels(df[[group]]))])
 }
 covid$days <- days_since(covid, 100)
 
@@ -57,4 +68,3 @@ if (interactive()) {
 }
 
 write.csv(covid_by_country, file="cases_by_country.csv", row.names=FALSE)
-
