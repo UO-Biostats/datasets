@@ -67,4 +67,4 @@ if (interactive()) {
         + xlim(c(0, 50)) + scale_y_log10())
 }
 
-write.csv(covid_by_country, file="cases_by_country.csv", row.names=FALSE)
+write.csv(covid_by_country, file="cases_by_region.csv", row.names=FALSE)
