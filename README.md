@@ -17,3 +17,9 @@ A dataset of numbers of cases, by country and/or province of COVID-19:
 - [README](COVID-19/README_STATS.md)
 
 
+## Drosophila viruses
+
+Data from [*Host-pathogen coevolution increases genetic variation in susceptibility to infection*](https://elifesciences.org/articles/46440):
+
+- [README](drosophila-viruses/README.md)
+
