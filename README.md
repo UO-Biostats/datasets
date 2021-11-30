@@ -29,3 +29,7 @@ Elevations of the region of Mars surrounding [Jezero crater](https://doi.org/10.
 
 - [README](jezero_crater/README.md)
 
+## Mangrove photosynthetic efficiency
+
+Photosynthetic efficiency of mangroves in various conditions,
+from [Short et al 2021, Aquatic Botany](https://doi.org/10.1016/j.aquabot.2020.103323).
